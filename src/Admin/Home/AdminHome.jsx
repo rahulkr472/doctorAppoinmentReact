@@ -1,4 +1,6 @@
 import React from 'react'
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import { useState } from 'react';
 import { useAuth } from '../../Auth/AuthContext';
 import { db, auth } from '../../Firebase-Config';
@@ -13,8 +15,8 @@ const AdminHome = () => {
 
 
     const [name, setName] = useState("");
-    const { email, setEmail } = useAuth()
-    const { password, setPassword } = useAuth()
+    const { email, setEmail } = useAuth("")
+    const { password, setPassword } = useAuth("")
     const [specialization, setSpecialization] = useState("");
     const [phone, setPhone] = useState("");
     const [gender, setGender] = useState("")
@@ -35,6 +37,27 @@ const AdminHome = () => {
 
     const [profilePicture, setProfilePicture] = useState(null)
     const [profilePicturePreview, setProfilePicturePreview] = useState(null);
+
+    const [workingDays, setWorkingDays] = useState({
+        monday: false,
+        tuesday: false,
+        wednesday: false,
+        thursday: false,
+        friday: false,
+        saturday: false,
+        sunday: false
+    });
+
+    const handleDayChange = (day) => {
+        setWorkingDays((prevDays) => ({
+            ...prevDays,
+            [day]: !prevDays[day]
+        }));
+    };
+
+    const [workStartTime, setWorkStartTime] = useState("");
+    const [workEndTime, setWorkEndTime] = useState("");
+    const [timeOff, setTimeOff] = useState("");
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -65,11 +88,12 @@ const AdminHome = () => {
 
                     const doctorUID = doctorCredentials.user.uid;
                     console.log();
-                    
+
 
                     const doctorSignUpinfo = {
                         name,
                         email,
+                        password,
                         specialization,
                         phone,
                         role: "doctor",
@@ -79,7 +103,10 @@ const AdminHome = () => {
                         dob,
                         experience,
                         qualifications,
-                        schedule,
+                        workingDays,
+                        workStartTime,
+                        workEndTime,
+                        timeOff,
                         fee,
                         status,
                         address,
@@ -126,6 +153,10 @@ const AdminHome = () => {
         } else {
             console.log("User not found");
         }
+
+
+        // console.log(workingDays, "start:",workStartTime, "end:", workEndTime, "offf", timeOff );
+        
     };
 
 
@@ -310,20 +341,71 @@ const AdminHome = () => {
                             className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                         />
                     </div>
-                    <div>
-                        <label className="block text-gray-700 font-medium" htmlFor="schedule">
-                            Work Schedule
-                        </label>
+
+                    <div className="space-y-6">
+            {/* Working Days */}
+            <div className="bg-white p-5 rounded-lg shadow-lg border border-gray-200">
+                <label className="font-semibold text-xl text-gray-700">Set Doctor's Working Days:</label>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+                    {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => (
+                        <div key={day} className="flex items-center space-x-2">
+                            <input
+                                type="checkbox"
+                                checked={workingDays[day]}
+                                onChange={() => handleDayChange(day)}
+                                className="h-4 w-4 text-blue-500 focus:ring-2 focus:ring-blue-500"
+                            />
+                            <label className="text-lg text-gray-700 capitalize">{day}</label>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Working Hours */}
+            <div className="bg-white p-5 rounded-lg shadow-lg border border-gray-200">
+                <label className="font-semibold text-xl text-gray-700">Set Doctor's Working Hours:</label>
+                <div className="flex space-x-6 mt-4">
+                    <div className="flex flex-col w-1/2">
+                        <label className="text-lg text-gray-700">Start Time:</label>
                         <input
-                            type="text"
-                            id="schedule"
-                            name="schedule"
-                            value={schedule}
-                            onChange={(e) => setSchedule(e.target.value)}
-                            placeholder="e.g., Mon-Fri, 9 AM - 5 PM"
-                            className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                            type="time"
+                            value={workStartTime}
+                            onChange={(e) => setWorkStartTime(e.target.value)}
+                            className="mt-2 p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
+                    <div className="flex flex-col w-1/2">
+                        <label className="text-lg text-gray-700">End Time:</label>
+                        <input
+                            type="time"
+                            value={workEndTime}
+                            onChange={(e) => setWorkEndTime(e.target.value)}
+                            className="mt-2 p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                        />
+                    </div>
+                </div>
+            </div>
+
+            {/* Time Off */}
+            <div className="space-y-6">
+      <div className="bg-white p-5 rounded-lg shadow-lg border border-gray-200">
+        <label className="font-semibold text-xl text-gray-700">Set Time Off:</label>
+       
+        <input
+        type="text"
+        id="offDay"
+        value={timeOff}
+        onChange={(e) => setTimeOff(e.target.value)}
+        className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+    />
+
+      </div>
+    </div>
+           
+        </div>
+
+
+
                     <div>
                         <label className="block text-gray-700 font-medium" htmlFor="fee">
                             Consultation Fee
