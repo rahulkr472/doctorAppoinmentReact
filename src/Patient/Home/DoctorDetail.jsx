@@ -13,16 +13,17 @@ const DoctorDetail = () => {
 
 
   const doctorData = JSON.parse(localStorage.getItem("doctor"))
-  const [day, setDay] = React.useState('')
-  const [time, setTime] = React.useState('')
+  const [selectedDays, setSelectedDays] = useState("");
+  const [selectedSlot, setSelectedSlot] = useState(null);
   const [reason, setReason] = useState("")
+
   const { patientPersonalInfo, setPatientPersonalInfo } = useAuth();
   const { patientMedicalInfo, setPatientMedicalInfo } = useAuth();
 
 
   const [appoinment, setAppoinment] = useState(() => {
     const data = localStorage.getItem("appoinment")
-   return data ? JSON.parse(data) : []
+    return data ? JSON.parse(data) : []
   })
 
   const [appoimentMessage, setAppoinmentMessage] = useState(() => {
@@ -97,9 +98,10 @@ const DoctorDetail = () => {
           const existingAppointments = doctorDoc.data().appoinment || [];
           // Add the new appointment to the array
           const newAppointment = {
-            day: day || "N/A",
-            time: time || "N/A",
-            reason: reason || "Reason" ,
+            date: new Date().toLocaleDateString(),
+            day: selectedDays.toString() || "N/A",
+            time: selectedSlot || "N/A",
+            reason: reason || "Reason",
             doctorId: doctorId,
             patientId: user.uid,
             doctorName: doctorData[0]?.doctorSignUpinfo.name || "N/A",
@@ -112,6 +114,7 @@ const DoctorDetail = () => {
             chronic: patientMedicalInfo?.chronicConditions || "N/A",
             medication: patientMedicalInfo?.medications || "N/A",
             otherInfo: patientMedicalInfo?.otherInfo || "N/A",
+            message: `hey you have a new appoinment by patient ${patientPersonalInfo?.name || "N/A"}`
           };
 
           // Update Firestore with the new array
@@ -119,25 +122,25 @@ const DoctorDetail = () => {
             appoinment: [...existingAppointments, newAppointment],
           });
 
-           setAppoinment((prev) => {
+          setAppoinment((prev) => {
             const update = [...prev, newAppointment]
             localStorage.setItem("appoinment", JSON.stringify(update))
             return update
-           })
+          })
 
-           setAppoinmentMessage((prev) => {
+          setAppoinmentMessage((prev) => {
             const update = [...prev, `Appointment scheduled with ${doctorData[0].doctorSignUpinfo.name} by patient ${patientPersonalInfo?.name || "N/A"}`]
             localStorage.setItem("AppoinmentMessage", JSON.stringify(update))
             return update
-           })
-           setDoctorMessage((prev) => {
+          })
+          setDoctorMessage((prev) => {
             const update = [...prev, `hey you have a new appoinment with ${patientPersonalInfo?.name || "N/A"}`]
             localStorage.setItem("doctorMessage", JSON.stringify(update))
             return update
-           })
+          })
 
 
-           
+
 
 
           alert("Medical Info submitted successfully");
@@ -153,7 +156,7 @@ const DoctorDetail = () => {
 
     }
 
-    
+
 
     if (user) {
 
@@ -167,13 +170,14 @@ const DoctorDetail = () => {
           const existingAppointments = patientDoc.data().appoinment || [];
           // Add the new appointment to the array
           const newAppointment = {
-            day: day || "Day",
-            time: time || "Time",
-            reason: reason || "Reason" ,
+            date: new Date().toLocaleDateString(),
+            day: selectedDays.toString() || "N/A",
+            time: selectedSlot || "N/A",
+            reason: reason || "Reason",
             doctorId: doctorId,
             patientId: user.uid,
             name: doctorData[0]?.doctorSignUpinfo.name || "N/A",
-            city: doctorData[0].doctorSignUpinfo.city ,
+            city: doctorData[0].doctorSignUpinfo.city,
             mobile: doctorData[0].doctorSignUpinfo.phone,
             state: doctorData[0].doctorSignUpinfo.state,
             clinicAddress: doctorData[0].doctorSignUpinfo.address,
@@ -188,6 +192,9 @@ const DoctorDetail = () => {
             appoinment: [...existingAppointments, newAppointment],
           });
 
+          console.log(appoinment);
+          
+
           alert("Medical Info submitted successfully");
         } else {
           console.error("Doctor document does not exist.");
@@ -202,12 +209,67 @@ const DoctorDetail = () => {
     }
 
 
-    
+
 
   }
 
   // console.log(reason);
-  
+
+  const [hidden, setHidden] = useState(true)
+
+  const doctorInfo = doctorData[0]?.doctorSignUpinfo;
+
+  if (!doctorInfo) {
+    return <p className="text-red-500">No doctor information available.</p>;
+  }
+
+  const workingDays = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+    .filter((day) => doctorInfo?.workingDays?.[day])
+    .map((day) => day.charAt(0).toUpperCase() + day.slice(1));
+
+
+
+  const handleDaySelection = (day) => {
+    if (selectedDays.includes(day)) {
+      setSelectedDays(selectedDays.filter((d) => d !== day));
+
+    } else {
+      setSelectedDays([day]);
+    }
+    setHidden(!hidden)
+
+  };
+
+
+
+  const generateTimeSlots = (startTime, endTime) => {
+    const slots = [];
+    let [startHour, startMinute] = startTime.split(":").map(Number);
+    const [endHour] = endTime.split(":").map(Number);
+
+    while (startHour < endHour || (startHour === endHour && startMinute === 0)) {
+      const timeSlot = `${startHour.toString().padStart(2, "0")}:${startMinute
+        .toString()
+        .padStart(2, "0")} ${startHour >= 12 ? "PM" : "AM"}`;
+      slots.push(timeSlot);
+
+      startMinute += 30;
+      if (startMinute >= 60) {
+        startMinute = 0;
+        startHour += 1;
+      }
+    }
+
+
+
+    return slots;
+  };
+
+  const timeSlots = generateTimeSlots(
+    doctorInfo.workStartTime,
+    doctorInfo.workEndTime
+  );
+
 
   return (
     <div className="p-6 bg-white rounded-lg">
@@ -252,7 +314,18 @@ const DoctorDetail = () => {
             </div>
             <div className="mb-2">
               <span className="font-semibold">Timing: </span>
-              <span>{doctorData[0].doctorSignUpinfo.schedule}</span>
+              <p className="text-[15px]  text-gray-500">
+                {/* Working Days:{" "} */}
+                {["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+                  .filter((day) => doctorData[0].doctorSignUpinfo?.workingDays?.[day])
+                  .map((day) => day.charAt(0).toUpperCase() + day.slice(1))
+                  .join(", ")}
+              </p>
+              <p className="text-[15px] mt-1 text-gray-500">Start Time: {doctorData[0].doctorSignUpinfo.workStartTime} AM</p>
+              <p className="text-[15px] mt-1 text-gray-500">End Time: {doctorData[0].doctorSignUpinfo.workEndTime} PM</p>
+              <p className="text-[15px] mt-1 text-gray-500">
+                Off Day: {new Date(doctorData[0].doctorSignUpinfo?.timeOff).toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+              </p>
             </div>
           </div>
 
@@ -273,7 +346,9 @@ const DoctorDetail = () => {
       </div>
 
 
-      <div
+
+
+      {/* <div
         className='mt-3 shadow-md rounded-md p-4 bg-blue-300'>
 
         <div className='flex  space-x-4  items-center'>
@@ -317,12 +392,113 @@ const DoctorDetail = () => {
         >
           Book Appointment
         </button>
+      </div> */}
+      <div className="mt-6">
+        <h3 className="text-lg font-medium text-gray-700 mb-2">Select Appointment Days</h3>
+        <div className="grid grid-cols-3 gap-4">
+          {workingDays.map((day) => (
+            <button
+              key={day}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${selectedDays.includes(day)
+                ? "bg-blue-500 text-white"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                }`}
+              onClick={() => handleDaySelection(day)}
+            >
+              {day}
+            </button>
+          ))}
+        </div>
+        <div className="mt-4">
+          <h4 className="text-gray-700 font-medium">Selected Days:</h4>
+          <p className="text-gray-500">
+            {selectedDays || "No days selected."}
+          </p>
+        </div>
+      </div>
+
+      {/* time slot */}
+      <div
+        hidden={hidden}
+        className="p-6 bg-white rounded-md shadow-md max-w-[1000px] mx-auto ">
+        <h2 className="text-xl font-semibold text-gray-700 mb-4">
+          Select a Time Slot
+        </h2>
+        <p className="text-[15px] text-gray-500">
+          <span className="font-medium">Start Time: </span>
+          {doctorInfo?.workStartTime || "Not specified"} AM
+        </p>
+        <p className="text-[15px] mt-1 text-gray-500">
+          <span className="font-medium">End Time: </span>
+          {doctorInfo?.workEndTime || "Not specified"} PM
+        </p>
+        <div className="mt-6">
+          <h3 className="text-lg font-medium text-gray-700 mb-2">
+            Available Time Slots
+          </h3>
+          <div className="grid  grid-cols-3 sm:grid-cols-5 gap-4">
+            {timeSlots.map((slot) => (
+              <button
+                key={slot}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${selectedSlot === slot
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  }`}
+                onClick={() => setSelectedSlot(slot)}
+              >
+                {slot}
+              </button>
+            ))}
+          </div>
+          <div className="mt-4">
+            <h4 className="text-gray-700 font-medium">Selected Time Slot:</h4>
+            <p className="text-gray-500">
+              {selectedSlot || "No time slot selected."}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className=" bg-gray-50 flex  justify-center">
+        <div className="p-6 bg-white rounded-lg shadow-md max-w-md w-full">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">
+            Select Appointment Reason
+          </h2>
+          <div className="mb-6">
+            <label htmlFor="reason" className="block text-sm font-medium text-gray-700 mb-2">
+              Reason for Appointment
+            </label>
+            <select
+              id="reason"
+              name="reason"
+              onChange={(e) => setReason(e.target.value)}
+              className="block w-full px-4 py-3 text-sm rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="" disabled>
+                -- Select a reason --
+              </option>
+              <option value="consultation">Consultation</option>
+              <option value="follow-up">Follow-up</option>
+              <option value="routine-checkup">Routine Checkup</option>
+              <option value="dental-cleaning">Dental Cleaning</option>
+              <option value="emergency">Emergency</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+        </div>
       </div>
 
 
+      <button
+        onClick={handleSlot}
+        className="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg shadow-md transition-all"
+      >
+        Submit
+      </button>
 
 
-    </div>
+    </div >
   )
 }
 

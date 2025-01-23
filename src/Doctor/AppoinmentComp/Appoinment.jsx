@@ -224,6 +224,8 @@ const Appoinment = () => {
                     <div className="p-4  rounded-lg flex justify-between items-center">
                       <div>
                         <p className="text-lg font-medium">{val.name}</p>
+                        <p className="text-sm text-gray-600">Day: {val.day}</p>
+                        <p className="text-sm text-gray-600">Time: {val.time}</p>
                         <p className="text-sm text-gray-600">Reason: {val.reason}</p>
                       </div>
                       <div className="space-x-2">

@@ -39,7 +39,7 @@ const Login = () => {
 
                 // Redirect based on role after successful login
                 if (userRole === 'doctor') {
-                    navigate('/doctor');
+                    navigate('/doctor/appointment');
                 }
 
 

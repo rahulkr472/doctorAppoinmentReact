@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth, db } from '../../Firebase-Config';
+import { doc, getDoc } from 'firebase/firestore';
 
 const DoctorHome = () => {
 
@@ -17,12 +20,62 @@ const DoctorHome = () => {
 
   //doctor appoinment message
 
-  const [message, setMessage] = useState(() => {
-    const data = localStorage.getItem("doctorMessage")
-   return data ? JSON.parse(data) : []
-  })
+  const [message, setMessage] = useState([])
   
+  useEffect(() => {
+  
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+  
+        if (user) {
+          fetchData(user.uid);
+  
+        } else {
+          console.log("No user is signed in");
+          // setPatientPersonalInfo(null);
+  
+        }
+  
+  
+      })
+  
+      return () => unsubscribe();
+    }, [])
+  
+  
+  
+    // console.log(data);
+    const fetchData = async (user) => {
+  
+  
+      if (user) {
+  
+        try {
+          const patientRef = doc(db, "doctors", user);
+          const patientDoc = await getDoc(patientRef)
+  
+          if (patientDoc.exists()) {
+            const data = patientDoc.data()
+            console.log(data.appoinment);
+            
+            setMessage(data.appoinment.map((val) => {
+              return val.message
+            }))
+  
+          } else {
+            console.log("no data");
+  
+          }
+  
+  
+        } catch (error) {
+          console.log(error);
+  
+        }
+      }
+    }
  
+    console.log(message);
+    
   // console.log(message);
 
   const [hidden, setHidden] = useState(true)
@@ -67,6 +120,8 @@ const DoctorHome = () => {
                 {
                   message?.length > 0 ? (
                     message.map((val, i) => {
+                      console.log(val);
+                      
                       return <li key={i}
                         className='mt-2 text-left'>
                         <span>

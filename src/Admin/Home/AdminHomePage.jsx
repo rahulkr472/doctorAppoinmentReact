@@ -38,7 +38,7 @@ const AdminHomePage = () => {
     const fetchData = async () => {
 
       const user = auth.currentUser
-      console.log(user);
+      // console.log(user);
 
       if (user) {
         const adminRef = doc(db, "admin", user.uid)

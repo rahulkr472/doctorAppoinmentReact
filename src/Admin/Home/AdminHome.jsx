@@ -30,14 +30,9 @@ const AdminHome = () => {
     const [city, setCity] = useState("")
     const [state, setState] = useState("")
     const [country, setCountry] = useState("")
-    const [doctorSignUpInfo, setDoctorSignUpInfo] = useState(() => {
-        const data = localStorage.getItem("doctorInfo")
-        return data ? JSON.parse(data) : []
-    })
-
-    const [profilePicture, setProfilePicture] = useState(null)
-    const [profilePicturePreview, setProfilePicturePreview] = useState(null);
-
+    const [workStartTime, setWorkStartTime] = useState("");
+    const [workEndTime, setWorkEndTime] = useState("");
+    const [timeOff, setTimeOff] = useState("");
     const [workingDays, setWorkingDays] = useState({
         monday: false,
         tuesday: false,
@@ -48,6 +43,16 @@ const AdminHome = () => {
         sunday: false
     });
 
+    const [doctorSignUpInfo, setDoctorSignUpInfo] = useState(() => {
+        const data = localStorage.getItem("doctorInfo")
+        return data ? JSON.parse(data) : []
+    })
+
+    const [profilePicture, setProfilePicture] = useState(null)
+    const [profilePicturePreview, setProfilePicturePreview] = useState(null);
+
+
+
     const handleDayChange = (day) => {
         setWorkingDays((prevDays) => ({
             ...prevDays,
@@ -55,12 +60,46 @@ const AdminHome = () => {
         }));
     };
 
-    const [workStartTime, setWorkStartTime] = useState("");
-    const [workEndTime, setWorkEndTime] = useState("");
-    const [timeOff, setTimeOff] = useState("");
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Form Validation
+        if (!name.trim()) return alert("Name is required.");
+        if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+            return alert("A valid email is required.");
+        if (
+            !password.trim() ||
+            password.length < 8 ||
+            !/[A-Z]/.test(password) ||
+            !/[0-9]/.test(password) ||
+            !/[!@#$%^&*]/.test(password)
+        )
+            return alert(
+                "Password must be at least 8 characters long and include at least one uppercase letter, one number, and one special character."
+            );
+        if (!specialization.trim()) return alert("Specialization is required.");
+        if (!phone.trim() || !/^\d{10}$/.test(phone))
+            return alert("A valid 10-digit phone number is required.");
+        if (!gender.trim()) return alert("Gender is required.");
+        if (!experience.trim() || isNaN(experience) || experience < 0)
+            return alert("Experience must be a positive number.");
+        if (!qualifications.trim()) return alert("Qualifications are required.");
+        if (!dob.trim()) return alert("Date of birth is required.");
+        if (!fee.trim() || isNaN(fee) || fee < 0)
+            return alert("Fee must be a positive number.");
+        if (!address.trim()) return alert("Address is required.");
+        if (!city.trim()) return alert("City is required.");
+        if (!state.trim()) return alert("State is required.");
+        if (!country.trim()) return alert("Country is required.");
+        if (!workStartTime.trim() || !workEndTime.trim())
+            return alert("Work start and end times are required.");
+        if (timeOff && !/^\d{2}:\d{2}$/.test(timeOff))
+            return alert("Time off must be in HH:mm format.");
+        if (
+            Object.values(workingDays).every((day) => day === false)
+        )
+            return alert("At least one working day must be selected.");
 
         const user = auth.currentUser;
         console.log(user.uid);
@@ -156,7 +195,7 @@ const AdminHome = () => {
 
 
         // console.log(workingDays, "start:",workStartTime, "end:", workEndTime, "offf", timeOff );
-        
+
     };
 
 
@@ -343,66 +382,66 @@ const AdminHome = () => {
                     </div>
 
                     <div className="space-y-6">
-            {/* Working Days */}
-            <div className="bg-white p-5 rounded-lg shadow-lg border border-gray-200">
-                <label className="font-semibold text-xl text-gray-700">Set Doctor's Working Days:</label>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-                    {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => (
-                        <div key={day} className="flex items-center space-x-2">
-                            <input
-                                type="checkbox"
-                                checked={workingDays[day]}
-                                onChange={() => handleDayChange(day)}
-                                className="h-4 w-4 text-blue-500 focus:ring-2 focus:ring-blue-500"
-                            />
-                            <label className="text-lg text-gray-700 capitalize">{day}</label>
+                        {/* Working Days */}
+                        <div className="bg-white p-5 rounded-lg shadow-lg border border-gray-200">
+                            <label className="font-semibold text-xl text-gray-700">Set Doctor's Working Days:</label>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+                                {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => (
+                                    <div key={day} className="flex items-center space-x-2">
+                                        <input
+                                            type="checkbox"
+                                            checked={workingDays[day]}
+                                            onChange={() => handleDayChange(day)}
+                                            className="h-4 w-4 text-blue-500 focus:ring-2 focus:ring-blue-500"
+                                        />
+                                        <label className="text-lg text-gray-700 capitalize">{day}</label>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
-                    ))}
-                </div>
-            </div>
 
-            {/* Working Hours */}
-            <div className="bg-white p-5 rounded-lg shadow-lg border border-gray-200">
-                <label className="font-semibold text-xl text-gray-700">Set Doctor's Working Hours:</label>
-                <div className="flex space-x-6 mt-4">
-                    <div className="flex flex-col w-1/2">
-                        <label className="text-lg text-gray-700">Start Time:</label>
-                        <input
-                            type="time"
-                            value={workStartTime}
-                            onChange={(e) => setWorkStartTime(e.target.value)}
-                            className="mt-2 p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-                        />
+                        {/* Working Hours */}
+                        <div className="bg-white p-5 rounded-lg shadow-lg border border-gray-200">
+                            <label className="font-semibold text-xl text-gray-700">Set Doctor's Working Hours:</label>
+                            <div className="flex space-x-6 mt-4">
+                                <div className="flex flex-col w-1/2">
+                                    <label className="text-lg text-gray-700">Start Time:</label>
+                                    <input
+                                        type="time"
+                                        value={workStartTime}
+                                        onChange={(e) => setWorkStartTime(e.target.value)}
+                                        className="mt-2 p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                                    />
+                                </div>
+                                <div className="flex flex-col w-1/2">
+                                    <label className="text-lg text-gray-700">End Time:</label>
+                                    <input
+                                        type="time"
+                                        value={workEndTime}
+                                        onChange={(e) => setWorkEndTime(e.target.value)}
+                                        className="mt-2 p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Time Off */}
+                        <div className="space-y-6">
+                            <div className="bg-white p-5 rounded-lg shadow-lg border border-gray-200">
+                                <label className="font-semibold text-xl text-gray-700">Set Time Off:</label>
+
+                                <input
+                                    type="text"
+                                    id="offDay"
+                                    value={timeOff}
+                                    onChange={(e) => setTimeOff(e.target.value)}
+                                    className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+                                />
+
+                            </div>
+                        </div>
+
                     </div>
-                    <div className="flex flex-col w-1/2">
-                        <label className="text-lg text-gray-700">End Time:</label>
-                        <input
-                            type="time"
-                            value={workEndTime}
-                            onChange={(e) => setWorkEndTime(e.target.value)}
-                            className="mt-2 p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-                        />
-                    </div>
-                </div>
-            </div>
-
-            {/* Time Off */}
-            <div className="space-y-6">
-      <div className="bg-white p-5 rounded-lg shadow-lg border border-gray-200">
-        <label className="font-semibold text-xl text-gray-700">Set Time Off:</label>
-       
-        <input
-        type="text"
-        id="offDay"
-        value={timeOff}
-        onChange={(e) => setTimeOff(e.target.value)}
-        className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
-    />
-
-      </div>
-    </div>
-           
-        </div>
 
 
 
