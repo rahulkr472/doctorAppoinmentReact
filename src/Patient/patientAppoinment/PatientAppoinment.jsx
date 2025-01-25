@@ -139,57 +139,65 @@ const PatientAppoinment = () => {
 
 
   return (
-    <div className='bg-gray-50'>
-      <p className='text-center text-2xl font-medium pt-5'>My appoiment</p>
-      <div className=''>
-        <ul className="space-y-4  px-10 py-10  rounded-md shadow-md">
-          { data?.length > 0 ? (
-            data.map((val, i) => (
-              <li
-                key={i}
-                className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:shadow-lg transition-shadow"
-              >
-                <div className="flex justify-between items-center mb-2">
-                  <div className="text-lg font-semibold text-gray-800">
-                    {val.name} {val.lastName}
-                  </div>
-                  <div className="text-sm text-gray-500">{val.day}, {val.time}</div>
+    <div className="bg-gradient-to-r from-blue-50 to-blue-100 min-h-screen">
+
+    {/* Appointment Section Title */}
+    <p className="text-center text-3xl font-semibold py-6 text-gray-800">My Appointments</p>
+  
+    {/* Appointment List */}
+    <div className="px-10">
+      <ul className="space-y-6">
+        {data?.length > 0 ? (
+          data.map((val, i) => (
+            <li key={i} className="bg-white p-6 rounded-lg shadow-xl border border-gray-200 hover:shadow-2xl transition-all duration-300 transform ">
+              {/* Header Section */}
+              <div className="flex justify-between items-center mb-4">
+                <div className="text-xl font-semibold text-gray-900 flex items-center">
+                  <span className="mr-2 text-blue-600">
+                    <i className="fas fa-user-md"></i> {/* Icon for doctor */}
+                  </span>
+                  {val.name} {val.lastName}
                 </div>
-                <p className="text-sm text-gray-700">
-                  <strong>Specialization:</strong> {val.specialization}
-                </p>
-                <p className="text-sm text-gray-700">
-                  <strong>Qualifications:</strong> {val.qualifications}
-                </p>
-                <p className="text-sm text-gray-700">
-                  <strong>Experience:</strong> {val.experience} years
-                </p>
-                <p className="text-sm text-gray-700">
-                  <strong>Consultation Fee:</strong> ₹{val.consultationFee}
-                </p>
-                <p className="text-sm text-gray-700">
-                  <strong>Clinic Address:</strong> {val.clinicAddress}, {val.city}, {val.state}
-                </p>
-                {/* <div className='mt-2 text-right'>
-                  <button 
-                  onClick={() => handleDeleteAppoinment(i)}
-                  className="bg-red-500 text-[12px] text-white font-medium py-2 px-4 rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300 transition duration-200">
-                    Cancel Appointment
-                  </button>
-                </div> */}
+                <div className="text-sm text-gray-500 flex items-center">
+                  <i className="fas fa-calendar-alt mr-2"></i> {val.day}, {val.time}
+                </div>
+              </div>
   
-              </li>
+              {/* Appointment Details */}
+              <p className="text-sm text-gray-700 mb-2">
+                <strong>Specialization:</strong> {val.specialization}
+              </p>
+              <p className="text-sm text-gray-700 mb-2">
+                <strong>Qualifications:</strong> {val.qualifications}
+              </p>
+              <p className="text-sm text-gray-700 mb-2">
+                <strong>Experience:</strong> {val.experience} years
+              </p>
+              <p className="text-sm text-gray-700 mb-2">
+                <strong>Consultation Fee:</strong> ₹{val.consultationFee}
+              </p>
+              <p className="text-sm text-gray-700 mb-4">
+                <strong>Clinic Address:</strong> {val.clinicAddress}, {val.city}, {val.state}
+              </p>
   
-            ))
-          ) : (
-            <div>No appoinment available</div>
-          ) 
-        }
-        </ul>
-
-      </div>
-
+              {/* Action Section (Cancel Button) */}
+              <div className="mt-4 text-right">
+                <button 
+                  onClick={() => handleDeleteAppointment(i)}
+                  className="bg-red-500 text-white font-medium py-2 px-6 rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300 transition duration-200">
+                  Cancel Appointment
+                </button>
+              </div>
+            </li>
+          ))
+        ) : (
+          <div className="text-center text-gray-500">No appointment available</div>
+        )}
+      </ul>
     </div>
+  
+  </div>
+  
   )
 }
 

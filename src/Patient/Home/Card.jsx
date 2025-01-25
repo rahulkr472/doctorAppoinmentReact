@@ -2,9 +2,11 @@ import React, { useEffect } from 'react'
 import { useState } from 'react'
 import { useAuth } from '../../Auth/AuthContext'
 import { addDoc, doc, setDoc, updateDoc } from 'firebase/firestore'
-import { db } from '../../Firebase-Config'
+import { auth, db } from '../../Firebase-Config'
 import { useNavigate } from 'react-router'
 import DoctorDetail from './DoctorDetail'
+import { getDoc, collection } from 'firebase/firestore'
+import { toast } from 'react-toastify'
 // import { update } from 'firebase/firestore'
 
 const Card = (props) => {
@@ -15,29 +17,64 @@ const Card = (props) => {
     const { doctor, setDoctor } = useAuth([])
 
     const [doctorDetail, setDoctorDetail] = useState()
+    const [patientDetail, setPatientDetail] = useState()
 
+    
+      const user = auth.currentUser;
+      const patientCollectionRef = collection(db, 'patients');
 
+    useEffect(() => {
+        const fetchData = async() => {
+             try {
+                  const snapshot = await getDoc(doc(patientCollectionRef, user.uid));
+                  if (snapshot.exists()) {
+                    const userData = snapshot.data();
+                
+                    setPatientDetail(userData)
+                    // console.log(userData);
+            
+                  } else {
+                    console.log("User not found");
+                  }
+                } catch (error) {
+                  console.error("Error fetching user info:", error);
+                }
+        }
+        fetchData()
+    },[])
+    
 
     const navigate = useNavigate()
 
+
     const handleDoctorBook = (e) => {
+        e.preventDefault(); // Prevent default action if necessary
+    
+        // Check if patientDetail contains valid data
+        if (!patientDetail?.personalInfo || !patientDetail?.medicalInfo) {
+            toast.error("Please submit your personal and medical information before booking a doctor.");
+            return; // Stop execution if data is missing
+        }
+    
+        // If data is valid, proceed with booking
+        const doctorId = id; // Replace with the actual doctor ID
+        const filterDoctor = doctor.filter((doc) => doc.id === doctorId);
+    
+        setDoctorDetail(filterDoctor);
+        localStorage.setItem("doctor", JSON.stringify(filterDoctor));
+        navigate("/patient/DoctorDetail");
+    };
+    
 
-        navigate("/patient/DoctorDetail")
-        const doctorId = id
 
-        const filterDoctor = doctor.filter((doc) => doc.id === doctorId)
-
-        setDoctorDetail(filterDoctor)
-
-        localStorage.setItem("doctor", JSON.stringify(filterDoctor))
-
-
-    }
+//   console.log(patientDetail);
+  
+    
 
     return (
         <div>
             <div className=''>
-                <div className="bg-[#f1f1f1] shadow-md rounded-md px-3 hover:shadow-xl hover:bg-slate-300 transition-all duration-300 ease-in-out">
+                <div className=" shadow-md rounded-md px-3 hover:shadow-xl hover:bg-slate-300 transition-all duration-300 ease-in-out">
                     <div className="flex justify-between ">
                         <div className='flex space-x-4 items-center'>
                             <div>

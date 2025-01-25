@@ -8,6 +8,7 @@ import { collection, addDoc, getDoc, setDoc, doc, updateDoc } from 'firebase/fir
 import { Link, useNavigate } from 'react-router-dom'
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import {  toast } from 'react-toastify';
 
 const AdminHome = () => {
 
@@ -50,6 +51,7 @@ const AdminHome = () => {
 
     const [profilePicture, setProfilePicture] = useState(null)
     const [profilePicturePreview, setProfilePicturePreview] = useState(null);
+    const [error, setError] = useState("")
 
 
 
@@ -65,41 +67,215 @@ const AdminHome = () => {
         e.preventDefault();
 
         // Form Validation
-        if (!name.trim()) return alert("Name is required.");
-        if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
-            return alert("A valid email is required.");
+        if (!name.trim()) {
+            return toast.error('Name is required.', {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                // transition: Bounce,
+                });
+        }else{
+            //   setError("")
+        }
+        if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+            return toast.error( "A valid email is required.", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                // transition: Bounce,
+                });
+           
+        }else{
+            // setError("")
+        }
+           
         if (
             !password.trim() ||
             password.length < 8 ||
             !/[A-Z]/.test(password) ||
             !/[0-9]/.test(password) ||
             !/[!@#$%^&*]/.test(password)
-        )
-            return alert(
-                "Password must be at least 8 characters long and include at least one uppercase letter, one number, and one special character."
-            );
-        if (!specialization.trim()) return alert("Specialization is required.");
+        ){
+            return toast.error(  "Password must be at least 8 characters long and include at least one uppercase letter, one number, and one special character.", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                // transition: Bounce,
+                });
+        
+        }else {
+            // setError("")
+        }
+            
+        if (!specialization.trim()) 
+            return toast.error("Specialization is required.", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
         if (!phone.trim() || !/^\d{10}$/.test(phone))
-            return alert("A valid 10-digit phone number is required.");
-        if (!gender.trim()) return alert("Gender is required.");
+            return toast.error("A valid 10-digit phone number is required.", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
+        if (!gender.trim()) 
+            return toast.error("Gender is required.", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
         if (!experience.trim() || isNaN(experience) || experience < 0)
-            return alert("Experience must be a positive number.");
-        if (!qualifications.trim()) return alert("Qualifications are required.");
-        if (!dob.trim()) return alert("Date of birth is required.");
+            return toast.error("Experience must be a positive number.", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
+        if (!qualifications.trim()) 
+            return toast.error("Qualifications are required.", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
+        if (!dob.trim()) 
+            return toast.error("Date of birth is required.", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
         if (!fee.trim() || isNaN(fee) || fee < 0)
-            return alert("Fee must be a positive number.");
-        if (!address.trim()) return alert("Address is required.");
-        if (!city.trim()) return alert("City is required.");
-        if (!state.trim()) return alert("State is required.");
-        if (!country.trim()) return alert("Country is required.");
+            return toast.error("Fee must be a positive number.", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
+        if (!address.trim()) 
+            return toast.error("Address is required.", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
+        if (!city.trim()) 
+            return toast.error("City is required.", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
+        if (!state.trim()) 
+            return toast.error("State is required.", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
+        if (!country.trim()) 
+            return toast.error("Country is required.", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
         if (!workStartTime.trim() || !workEndTime.trim())
-            return alert("Work start and end times are required.");
-        if (timeOff && !/^\d{2}:\d{2}$/.test(timeOff))
-            return alert("Time off must be in HH:mm format.");
-        if (
-            Object.values(workingDays).every((day) => day === false)
-        )
-            return alert("At least one working day must be selected.");
+            return toast.error("Work start and end times are required.", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
+        // if (timeOff && !/^\d{2}:\d{2}$/.test(timeOff))
+        //     return toast.error("Time off must be in HH:mm format.", {
+        //         position: "top-right",
+        //         autoClose: 3000,
+        //         hideProgressBar: false,
+        //         closeOnClick: false,
+        //         pauseOnHover: true,
+        //         draggable: true,
+        //         progress: undefined,
+        //         theme: "dark",
+        //     });
+        if (Object.values(workingDays).every((day) => day === false))
+            return toast.error("At least one working day must be selected.", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
 
         const user = auth.currentUser;
         console.log(user.uid);
@@ -137,7 +313,7 @@ const AdminHome = () => {
                         phone,
                         role: "doctor",
                         uid: doctorUID,
-                        profilePicturePreview,
+                        profilePicturePreview: profilePicturePreview || "",
                         gender,
                         dob,
                         experience,
@@ -152,9 +328,10 @@ const AdminHome = () => {
                         city,
                         state,
                         country
-
                     }
 
+                    console.log("Doctor SignUp Info:", doctorSignUpinfo);
+                    
                     // Add doctor details to Firestore
                     const doctorDoc = doc(db, "doctors", doctorUID);
                     await setDoc(doctorDoc, {
@@ -163,14 +340,24 @@ const AdminHome = () => {
                     });
 
                     // Update the state and localStorage
-                    // Update the state and localStorage
                     setDoctorSignUpInfo((prev) => {
                         const updatedInfo = [...prev, doctorSignUpinfo];
                         localStorage.setItem("doctorInfo", JSON.stringify(updatedInfo)); // Update localStorage
                         return updatedInfo; // Update the state
                     });
 
-                    alert("Doctor added successfully!");
+                    
+                    toast.success('"Doctor added successfully!"', {
+                        position: "top-right",
+                        autoClose: 3000,
+                        hideProgressBar: false,
+                        closeOnClick: false,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "dark",
+                        // transition: Boun.ce,
+                        });
 
                     // Re-authenticate admin
                     await signInWithEmailAndPassword(auth, adminEmail, adminPassword);
@@ -243,6 +430,7 @@ const AdminHome = () => {
                             placeholder="Enter doctor's name"
                             className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                         />
+                        
                     </div>
                     <div>
                         <label className="block text-gray-700 font-medium" htmlFor="email">
@@ -257,6 +445,7 @@ const AdminHome = () => {
                             placeholder="Enter doctor's email"
                             className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                         />
+                        
                     </div>
 
                     <div>
@@ -272,6 +461,7 @@ const AdminHome = () => {
                             placeholder="Enter doctor's phone number"
                             className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                         />
+                        
                     </div>
                     <div>
                         <label className="block text-gray-700 font-medium" htmlFor="password">
@@ -426,7 +616,7 @@ const AdminHome = () => {
                         </div>
 
                         {/* Time Off */}
-                        <div className="space-y-6">
+                        {/* <div className="space-y-6">
                             <div className="bg-white p-5 rounded-lg shadow-lg border border-gray-200">
                                 <label className="font-semibold text-xl text-gray-700">Set Time Off:</label>
 
@@ -439,7 +629,7 @@ const AdminHome = () => {
                                 />
 
                             </div>
-                        </div>
+                        </div> */}
 
                     </div>
 

@@ -122,7 +122,7 @@ const AdminHomePage = () => {
                 </p>
                 <ul
                   hidden={hidden}
-                  className="absolute top-[75px] right-[0] w-[250px] mt-3 bg-[#f1f1f1] text-black text-[13px] shadow-xl rounded-md p-4"
+                  className="absolute top-[75px] right-[0]  w-[250px] mt-3 bg-[#f1f1f1] text-black text-[13px] shadow-xl rounded-md p-7"
                 >
                   {appoimentMessage?.length > 0 ? (
                     appoimentMessage.map((val, i) => (

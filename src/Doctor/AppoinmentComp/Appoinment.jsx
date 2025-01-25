@@ -22,9 +22,13 @@ const Appoinment = () => {
     return hiddenState ? JSON.parse(hiddenState) : {}
   })
 
-  const [acceptDetail, setAcceptDetail] = useState([])
 
-  const [doctorDetailInfo, setDoctorDetailInfo] = useState()
+  const [searchPatient, setSearchPatient] = useState("");
+  const [searchReason, setSearchReason] = useState("");
+  const [searchDays, setSearchDays] = useState("");
+  // const [acceptDetail, setAcceptDetail] = useState([])
+
+  // const [doctorDetailInfo, setDoctorDetailInfo] = useState()
 
   useEffect(() => {
 
@@ -204,20 +208,59 @@ const Appoinment = () => {
   }
 
 
+const  filterData = data.filter((val) => {
+      
+  return (
+    val.name.toLowerCase().includes(searchPatient.toLowerCase()) &&
+    val.reason.toLowerCase().includes(searchReason.toLowerCase()) &&
+    val.day.toLowerCase().includes(searchDays.toLowerCase())
+  );
+
+
+  })
+console.log(filterData);
+
+
 
 
   return (
     <div className='bg-gray-50'>
-      <h1 className='text-2xl text-center py-5 font-semibold text-[#6b6b6b]'>Appoinment
-        <span></span>
+      <h1 className='text-2xl text-center py-5 font-semibold text-[#6b6b6b]'>
+        Appoinment  
       </h1>
-      <div className="p-4 max-w-md mx-auto bg-white rounded-xl shadow-md space-y-4">
+
+      <div className='flex flex-wrap gap-3 justify-center space-x-4 text-center py-5'> 
+      <input
+                type="text"
+                placeholder="Search patient by name"
+                value={searchPatient}
+                onChange={(e) => setSearchPatient(e.target.value)}
+                className="text-center md:px-10  p-2 border rounded-lg shadow-md"
+      />
+      <input
+                type="text"
+                placeholder="Search patient by Reason"
+                value={searchReason}
+                onChange={(e) => setSearchReason(e.target.value)}
+                className="text-center md:px-10  p-2 border rounded-lg shadow-md"
+      />
+      <input
+                type="text"
+                placeholder="Search patient by days"
+                value={searchDays}
+                onChange={(e) => setSearchDays(e.target.value)}
+                className="text-center md:px-10  p-2 border rounded-lg shadow-md"
+      />
+
+      </div>
+      
+      <div className="p-4 max-w-[80%] mx-auto bg-white rounded-xl shadow-md space-y-4">
         <div className="text-center">
           <h2 className="text-xl font-semibold">Patient Requests</h2>
         </div>
         <ul>
-          { data ? (
-              data.map((val, i) => {
+          { filterData ? (
+              filterData.map((val, i) => {
                 // console.log(val);
                 return <li key={i}>
                   <div className="space-y-2 bg-gray-100">

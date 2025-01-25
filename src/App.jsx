@@ -22,10 +22,26 @@ import DoctorMangement from './Admin/DoctorMangement/DoctorMangement'
 import PatientMangement from './Admin/PatientMangement/PatientMangement'
 import PatientDetailPage from './Admin/PatientDetail/PatientDetailPage'
 import AdminAppoinment from './Admin/Appoinment/AdminAppoinment'
+import { ToastContainer, toast } from 'react-toastify';
+import AppoinmentDetail from './Admin/Appoinment/AppoinmentDetail'
+
 
 const App = () => {
   return (
     <BrowserRouter>
+      <ToastContainer 
+      position="top-right"
+      autoClose={3000}
+      hideProgressBar={false}
+      newestOnTop={false}
+      closeOnClick={false}
+      rtl={false}
+      pauseOnFocusLoss
+      draggable
+      pauseOnHover
+      theme="light"
+      // transition={Bounce}
+      />
       <AuthProvider>
         <DoctorContext>
           <Routes>
@@ -33,14 +49,15 @@ const App = () => {
             <Route path='/login' element={<Login />} />
 
             <Route path='/admin/*' element={<AdminMain />}>
-            
+
               <Route index element={<AdminHomePage />} />
-                <Route path='home' element={<AdminHomePage />}/>
-                <Route path='Doctor' element={<AdminHome />} />
-                <Route path='DoctorMangement' element={<DoctorMangement />}/>
-                <Route path='PatientMangement' element={<PatientMangement />}/>
-                <Route path='detail' element={<PatientDetailPage />} />
-                <Route path='appoinment' element={<AdminAppoinment/>} /> 
+              <Route path='home' element={<AdminHomePage />} />
+              <Route path='Doctor' element={<AdminHome />} />
+              <Route path='DoctorMangement' element={<DoctorMangement />} />
+              <Route path='PatientMangement' element={<PatientMangement />} />
+              <Route path='detail' element={<PatientDetailPage />} />
+              <Route path='appoinment' element={<AdminAppoinment />} />
+              <Route path='appoinmentDetail' element={<AppoinmentDetail/>} />
             </Route>
 
             <Route path='/doctor/*' element={<DoctorMain />}>
@@ -68,7 +85,9 @@ const App = () => {
         </DoctorContext>
       </AuthProvider>
     </BrowserRouter>
+
   )
+
 }
 
 export default App
