@@ -5,8 +5,12 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   build: {
-    rollupOptions: {
-      external: ['react/jsx-runtime'],
+    commonjsOptions: {
+      include: [/react/, /react-dom/], // Ensure React is included for proper bundling
     },
+    rollupOptions: {
+      external: ['react', 'react-dom'], // Explicitly add React and ReactDOM as external dependencies
+    },
+    chunkSizeWarningLimit: 1500 // Increase the limit (in KB)
   },
 })
