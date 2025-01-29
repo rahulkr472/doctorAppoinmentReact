@@ -15,6 +15,7 @@ const DoctorDetail = () => {
   const doctorData = JSON.parse(localStorage.getItem("doctor"))
   const [selectedDays, setSelectedDays] = useState("");
   const [selectedSlot, setSelectedSlot] = useState(null);
+  const [timeSlots, setTimeSlots] = useState([])
   const [reason, setReason] = useState("")
 
   const { patientPersonalInfo, setPatientPersonalInfo } = useAuth();
@@ -114,7 +115,7 @@ const DoctorDetail = () => {
             chronic: patientMedicalInfo?.chronicConditions || "N/A",
             medication: patientMedicalInfo?.medications || "N/A",
             otherInfo: patientMedicalInfo?.otherInfo || "N/A",
-            message: `hey you have a new appoinment by patient ${patientPersonalInfo?.name || "N/A"}`
+            message: `hey you have a new appoinment by patient ${patientPersonalInfo?.name || "N/A"} ${new Date().toLocaleDateString()}`
           };
 
           // Update Firestore with the new array
@@ -129,15 +130,11 @@ const DoctorDetail = () => {
           })
 
           setAppoinmentMessage((prev) => {
-            const update = [...prev, `Appointment scheduled with ${doctorData[0].doctorSignUpinfo.name} by patient ${patientPersonalInfo?.name || "N/A"}`]
+            const update = [...prev, `Appointment scheduled with ${doctorData[0].doctorSignUpinfo.name} by patient ${patientPersonalInfo?.name || "N/A"} ${new Date().toLocaleDateString()}`]
             localStorage.setItem("AppoinmentMessage", JSON.stringify(update))
             return update
           })
-          setDoctorMessage((prev) => {
-            const update = [...prev, `hey you have a new appoinment with ${patientPersonalInfo?.name || "N/A"}`]
-            localStorage.setItem("doctorMessage", JSON.stringify(update))
-            return update
-          })
+
 
 
 
@@ -193,7 +190,7 @@ const DoctorDetail = () => {
           });
 
           console.log(appoinment);
-          
+
 
           alert("Medical Info submitted successfully");
         } else {
@@ -228,30 +225,32 @@ const DoctorDetail = () => {
     .map((day) => day.charAt(0).toUpperCase() + day.slice(1));
 
 
-
-  const handleDaySelection = (day) => {
-    if (selectedDays.includes(day)) {
-      setSelectedDays(selectedDays.filter((d) => d !== day));
-
+  function getWorkingHours(selectedDay) {
+    selectedDay = selectedDay.toLowerCase(); // Ensure case consistency
+    if (doctorInfo.workingDays[selectedDay]) {
+      return doctorInfo.workingDays[selectedDay];
     } else {
-      setSelectedDays([day]);
+      return "Invalid day selected!";
     }
-    setHidden(!hidden)
-
-  };
-
+  }
 
 
   const generateTimeSlots = (startTime, endTime) => {
-    const slots = [];
-    let [startHour, startMinute] = startTime.split(":").map(Number);
-    const [endHour] = endTime.split(":").map(Number);
+    if (!startTime || !endTime) return [];
 
-    while (startHour < endHour || (startHour === endHour && startMinute === 0)) {
-      const timeSlot = `${startHour.toString().padStart(2, "0")}:${startMinute
+    const slots = [];
+    let [startHour, startMinute, startPeriod] = startTime.split(/[: ]/);
+    let [endHour, endMinute, endPeriod] = endTime.split(/[: ]/);
+
+    // Convert to 24-hour format
+    startHour = startPeriod === "PM" && startHour !== "12" ? +startHour + 12 : +startHour;
+    endHour = endPeriod === "PM" && endHour !== "12" ? +endHour + 12 : +endHour;
+
+    while (startHour < endHour || (startHour === endHour && startMinute < endMinute)) {
+      const formattedTime = `${(startHour % 12 || 12).toString().padStart(2, "0")}:${startMinute
         .toString()
         .padStart(2, "0")} ${startHour >= 12 ? "PM" : "AM"}`;
-      slots.push(timeSlot);
+      slots.push(formattedTime);
 
       startMinute += 30;
       if (startMinute >= 60) {
@@ -260,16 +259,37 @@ const DoctorDetail = () => {
       }
     }
 
-
-
     return slots;
   };
 
-  const timeSlots = generateTimeSlots(
-    doctorInfo.workStartTime,
-    doctorInfo.workEndTime
-  );
+  const handleDaySelection = (day) => {
+    // setSelectedDays(day)
+    if (selectedDays.includes(day)) {
+      setSelectedDays(selectedDays.filter((d) => d !== day));
 
+    } else {
+      setSelectedDays([day]);
+    }
+    setHidden(!hidden)
+
+
+    const workingHours = getWorkingHours(day);
+    if (workingHours && workingHours.enabled) {
+      const slots = generateTimeSlots(workingHours.startTime, workingHours.endTime);
+      setTimeSlots(slots);
+    } else {
+      setTimeSlots([]); // No time slots if doctor isn't available
+    }
+
+  };
+
+
+  useEffect(() => {
+    console.log(timeSlots); // This will correctly log the updated state
+  }, [timeSlots]);
+
+
+  const dayOrder = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
 
   return (
     <div className="p-6 bg-white rounded-lg">
@@ -313,18 +333,37 @@ const DoctorDetail = () => {
               <span>{doctorData[0].doctorSignUpinfo.city}</span>
             </div>
             <div className="mb-2">
-              <span className="font-semibold">Timing: </span>
-              <p className="text-[15px]  text-gray-500">
+              <span className="font-semibold">WorkingDays: </span>
+              <p className="text-[15px]  text-gray-500 pb-2">
                 {/* Working Days:{" "} */}
                 {["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
-                  .filter((day) => doctorData[0].doctorSignUpinfo?.workingDays?.[day])
+                  .filter((day) => doctorData[0].doctorSignUpinfo?.workingDays?.[day].enabled)
                   .map((day) => day.charAt(0).toUpperCase() + day.slice(1))
                   .join(", ")}
               </p>
-              <p className="text-[15px] mt-1 text-gray-500">Start Time: {doctorData[0].doctorSignUpinfo.workStartTime} AM</p>
-              <p className="text-[15px] mt-1 text-gray-500">End Time: {doctorData[0].doctorSignUpinfo.workEndTime} PM</p>
-              <p className="text-[15px] mt-1 text-gray-500">
-                Off Day: {new Date(doctorData[0].doctorSignUpinfo?.timeOff).toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+              <span className="font-semibold">Timing: </span>
+              <p className="text-[15px] text-gray-500 pb-2">
+                {Object.entries(doctorData[0].doctorSignUpinfo?.workingDays)
+                  .filter(([day, isWorking]) => isWorking.enabled)
+                  .sort(([dayA], [dayB]) => dayOrder.indexOf(dayA) - dayOrder.indexOf(dayB)) // Sort by predefined order
+                  .map(([day, info]) => (
+                    <div key={day} className='mt-1'>
+                      <span className='text-black font-medium'>
+                        {day.charAt(0).toUpperCase() + day.slice(1)} :-
+                      </span>
+                      {info.startTime} - {info.endTime}
+                    </div>
+                  ))}
+              </p>
+              <span className="font-semibold">OffDays: </span>
+              <p className="text-sm text-gray-500">
+                {/* Off Days:{" "} */}
+                {Object.entries(doctorData[0].doctorSignUpinfo?.workingDays)
+                  .filter(([day, isWorking]) => !isWorking.enabled)
+                  .map(([day]) => (
+                    <div>{day.charAt(0).toUpperCase() + day.slice(1)}</div>
+                  ))
+                }
               </p>
             </div>
           </div>
@@ -396,18 +435,26 @@ const DoctorDetail = () => {
       <div className="mt-6">
         <h3 className="text-lg font-medium text-gray-700 mb-2">Select Appointment Days</h3>
         <div className="grid grid-cols-3 gap-4">
-          {workingDays.map((day) => (
-            <button
-              key={day}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${selectedDays.includes(day)
-                ? "bg-blue-500 text-white"
-                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                }`}
-              onClick={() => handleDaySelection(day)}
-            >
-              {day}
-            </button>
-          ))}
+          {["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+            .filter((day) => doctorData[0].doctorSignUpinfo?.workingDays?.[day].enabled)
+            .map((day) => (
+              <button
+                key={day}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${selectedDays.includes(day)
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  }`}
+                onClick={() => handleDaySelection(day)}
+              >
+                {day}
+              </button>
+            ))
+          }
+
+
+
+
+
         </div>
         <div className="mt-4">
           <h4 className="text-gray-700 font-medium">Selected Days:</h4>
@@ -424,31 +471,37 @@ const DoctorDetail = () => {
         <h2 className="text-xl font-semibold text-gray-700 mb-4">
           Select a Time Slot
         </h2>
-        <p className="text-[15px] text-gray-500">
+        {/* <p className="text-[15px] text-gray-500">
           <span className="font-medium">Start Time: </span>
           {doctorInfo?.workStartTime || "Not specified"} AM
         </p>
         <p className="text-[15px] mt-1 text-gray-500">
           <span className="font-medium">End Time: </span>
           {doctorInfo?.workEndTime || "Not specified"} PM
-        </p>
+        </p> */}
         <div className="mt-6">
           <h3 className="text-lg font-medium text-gray-700 mb-2">
             Available Time Slots
           </h3>
           <div className="grid  grid-cols-3 sm:grid-cols-5 gap-4">
-            {timeSlots.map((slot) => (
-              <button
-                key={slot}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${selectedSlot === slot
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                  }`}
-                onClick={() => setSelectedSlot(slot)}
-              >
-                {slot}
-              </button>
-            ))}
+            {timeSlots.length > 0 ? (
+              timeSlots.map((slot) => (
+
+                <button
+                  key={slot}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${selectedSlot === slot
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    }`}
+                  onClick={() => setSelectedSlot(slot)}
+                >
+                  {slot}{console.log(slot)
+                  }
+                </button>
+              ))
+            ) : (
+              <p>No time slots is available</p>
+            )}
           </div>
           <div className="mt-4">
             <h4 className="text-gray-700 font-medium">Selected Time Slot:</h4>

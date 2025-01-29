@@ -8,7 +8,7 @@ import { collection, addDoc, getDoc, setDoc, doc, updateDoc } from 'firebase/fir
 import { Link, useNavigate } from 'react-router-dom'
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import {  toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 
 const AdminHome = () => {
 
@@ -35,14 +35,16 @@ const AdminHome = () => {
     const [workEndTime, setWorkEndTime] = useState("");
     const [timeOff, setTimeOff] = useState("");
     const [workingDays, setWorkingDays] = useState({
-        monday: false,
-        tuesday: false,
-        wednesday: false,
-        thursday: false,
-        friday: false,
-        saturday: false,
-        sunday: false
-    });
+        monday: { enabled: false, startTime: '', endTime: '' },
+        tuesday: { enabled: false, startTime: '', endTime: '' },
+        wednesday: { enabled: false, startTime: '', endTime: '' },
+        thursday: { enabled: false, startTime: '', endTime: '' },
+        friday: { enabled: false, startTime: '', endTime: '' },
+        saturday: { enabled: false, startTime: '', endTime: '' },
+        sunday: { enabled: false, startTime: '', endTime: '' },
+      });
+      
+
 
     const [doctorSignUpInfo, setDoctorSignUpInfo] = useState(() => {
         const data = localStorage.getItem("doctorInfo")
@@ -56,11 +58,30 @@ const AdminHome = () => {
 
 
     const handleDayChange = (day) => {
-        setWorkingDays((prevDays) => ({
-            ...prevDays,
-            [day]: !prevDays[day]
+        setWorkingDays((prev) => ({
+            ...prev,
+            [day]: { ...prev[day], enabled: !prev[day].enabled },
         }));
     };
+
+    const generateTimeSlots = () => {
+        const slots = [];
+        let startTime = 10; // 10 AM
+        let endTime = 20; // 8 PM
+      
+        for (let hour = startTime; hour <= endTime; hour++) {
+          const formattedTime = `${hour <= 12 ? hour : hour - 12}:00 ${hour < 12 ? 'AM' : 'PM'}`;
+          slots.push(formattedTime);
+        }
+        return slots;
+      };
+      
+      const handleTimeChange = (day, field, value) => {
+        setWorkingDays((prev) => ({
+          ...prev,
+          [day]: { ...prev[day], [field]: value },
+        }));
+      };
 
 
     const handleSubmit = async (e) => {
@@ -78,12 +99,12 @@ const AdminHome = () => {
                 progress: undefined,
                 theme: "dark",
                 // transition: Bounce,
-                });
-        }else{
+            });
+        } else {
             //   setError("")
         }
-        if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
-            return toast.error( "A valid email is required.", {
+        if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            return toast.error("A valid email is required.", {
                 position: "top-right",
                 autoClose: 3000,
                 hideProgressBar: false,
@@ -93,20 +114,20 @@ const AdminHome = () => {
                 progress: undefined,
                 theme: "dark",
                 // transition: Bounce,
-                });
-           
-        }else{
+            });
+
+        } else {
             // setError("")
         }
-           
+
         if (
             !password.trim() ||
             password.length < 8 ||
             !/[A-Z]/.test(password) ||
             !/[0-9]/.test(password) ||
             !/[!@#$%^&*]/.test(password)
-        ){
-            return toast.error(  "Password must be at least 8 characters long and include at least one uppercase letter, one number, and one special character.", {
+        ) {
+            return toast.error("Password must be at least 8 characters long and include at least one uppercase letter, one number, and one special character.", {
                 position: "top-right",
                 autoClose: 3000,
                 hideProgressBar: false,
@@ -116,13 +137,13 @@ const AdminHome = () => {
                 progress: undefined,
                 theme: "dark",
                 // transition: Bounce,
-                });
-        
-        }else {
+            });
+
+        } else {
             // setError("")
         }
-            
-        if (!specialization.trim()) 
+
+        if (!specialization.trim())
             return toast.error("Specialization is required.", {
                 position: "top-right",
                 autoClose: 3000,
@@ -144,7 +165,7 @@ const AdminHome = () => {
                 progress: undefined,
                 theme: "dark",
             });
-        if (!gender.trim()) 
+        if (!gender.trim())
             return toast.error("Gender is required.", {
                 position: "top-right",
                 autoClose: 3000,
@@ -166,7 +187,7 @@ const AdminHome = () => {
                 progress: undefined,
                 theme: "dark",
             });
-        if (!qualifications.trim()) 
+        if (!qualifications.trim())
             return toast.error("Qualifications are required.", {
                 position: "top-right",
                 autoClose: 3000,
@@ -177,7 +198,7 @@ const AdminHome = () => {
                 progress: undefined,
                 theme: "dark",
             });
-        if (!dob.trim()) 
+        if (!dob.trim())
             return toast.error("Date of birth is required.", {
                 position: "top-right",
                 autoClose: 3000,
@@ -199,7 +220,7 @@ const AdminHome = () => {
                 progress: undefined,
                 theme: "dark",
             });
-        if (!address.trim()) 
+        if (!address.trim())
             return toast.error("Address is required.", {
                 position: "top-right",
                 autoClose: 3000,
@@ -210,7 +231,7 @@ const AdminHome = () => {
                 progress: undefined,
                 theme: "dark",
             });
-        if (!city.trim()) 
+        if (!city.trim())
             return toast.error("City is required.", {
                 position: "top-right",
                 autoClose: 3000,
@@ -221,7 +242,7 @@ const AdminHome = () => {
                 progress: undefined,
                 theme: "dark",
             });
-        if (!state.trim()) 
+        if (!state.trim())
             return toast.error("State is required.", {
                 position: "top-right",
                 autoClose: 3000,
@@ -232,7 +253,7 @@ const AdminHome = () => {
                 progress: undefined,
                 theme: "dark",
             });
-        if (!country.trim()) 
+        if (!country.trim())
             return toast.error("Country is required.", {
                 position: "top-right",
                 autoClose: 3000,
@@ -243,17 +264,17 @@ const AdminHome = () => {
                 progress: undefined,
                 theme: "dark",
             });
-        if (!workStartTime.trim() || !workEndTime.trim())
-            return toast.error("Work start and end times are required.", {
-                position: "top-right",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: false,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "dark",
-            });
+        // if (!workStartTime.trim() || !workEndTime.trim())
+        //     return toast.error("Work start and end times are required.", {
+        //         position: "top-right",
+        //         autoClose: 3000,
+        //         hideProgressBar: false,
+        //         closeOnClick: false,
+        //         pauseOnHover: true,
+        //         draggable: true,
+        //         progress: undefined,
+        //         theme: "dark",
+        //     });
         // if (timeOff && !/^\d{2}:\d{2}$/.test(timeOff))
         //     return toast.error("Time off must be in HH:mm format.", {
         //         position: "top-right",
@@ -331,7 +352,7 @@ const AdminHome = () => {
                     }
 
                     console.log("Doctor SignUp Info:", doctorSignUpinfo);
-                    
+
                     // Add doctor details to Firestore
                     const doctorDoc = doc(db, "doctors", doctorUID);
                     await setDoc(doctorDoc, {
@@ -346,7 +367,7 @@ const AdminHome = () => {
                         return updatedInfo; // Update the state
                     });
 
-                    
+
                     toast.success('"Doctor added successfully!"', {
                         position: "top-right",
                         autoClose: 3000,
@@ -357,7 +378,7 @@ const AdminHome = () => {
                         progress: undefined,
                         theme: "dark",
                         // transition: Boun.ce,
-                        });
+                    });
 
                     // Re-authenticate admin
                     await signInWithEmailAndPassword(auth, adminEmail, adminPassword);
@@ -403,7 +424,7 @@ const AdminHome = () => {
 
     }
 
-    // console.log(profilePicturePreview);
+    console.log(workingDays);
 
 
 
@@ -430,7 +451,7 @@ const AdminHome = () => {
                             placeholder="Enter doctor's name"
                             className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                         />
-                        
+
                     </div>
                     <div>
                         <label className="block text-gray-700 font-medium" htmlFor="email">
@@ -445,7 +466,7 @@ const AdminHome = () => {
                             placeholder="Enter doctor's email"
                             className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                         />
-                        
+
                     </div>
 
                     <div>
@@ -461,7 +482,7 @@ const AdminHome = () => {
                             placeholder="Enter doctor's phone number"
                             className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                         />
-                        
+
                     </div>
                     <div>
                         <label className="block text-gray-700 font-medium" htmlFor="password">
@@ -574,21 +595,58 @@ const AdminHome = () => {
                     <div className="space-y-6">
                         {/* Working Days */}
                         <div className="bg-white p-5 rounded-lg shadow-lg border border-gray-200">
-                            <label className="font-semibold text-xl text-gray-700">Set Doctor's Working Days:</label>
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-                                {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => (
-                                    <div key={day} className="flex items-center space-x-2">
-                                        <input
-                                            type="checkbox"
-                                            checked={workingDays[day]}
-                                            onChange={() => handleDayChange(day)}
-                                            className="h-4 w-4 text-blue-500 focus:ring-2 focus:ring-blue-500"
-                                        />
-                                        <label className="text-lg text-gray-700 capitalize">{day}</label>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
+  <label className="font-semibold text-xl text-gray-700">Set Doctor's Working Days:</label>
+  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+    {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => (
+      <div key={day} className="flex flex-col space-y-2">
+        {/* Checkbox to enable/disable day */}
+        <div className="flex items-center space-x-2">
+          <input
+            type="checkbox"
+            checked={workingDays[day]?.enabled || false}
+            onChange={() => handleDayChange(day)}
+            className="h-4 w-4 text-blue-500 focus:ring-2 focus:ring-blue-500"
+          />
+          <label className="text-lg text-gray-700 capitalize">{day}</label>
+        </div>
+        
+        {/* Time range dropdowns */}
+        {workingDays[day]?.enabled && (
+          <div className="flex flex-col space-y-2">
+            <label className="text-sm text-gray-600">Select Time Range:</label>
+            <div className="flex space-x-2">
+              <select
+                value={workingDays[day]?.startTime || ''}
+                onChange={(e) => handleTimeChange(day, 'startTime', e.target.value)}
+                className="border border-gray-300 rounded-lg p-2 text-gray-700 focus:ring-2 focus:ring-blue-500"
+              >
+                {generateTimeSlots().map((time) => (
+                  <option key={time} value={time}>
+                    {time}
+                  </option>
+                ))}
+              </select>
+              <span className="text-gray-500">to</span>
+              <select
+                value={workingDays[day]?.endTime || ''}
+                onChange={(e) => handleTimeChange(day, 'endTime', e.target.value)}
+                className="border border-gray-300 rounded-lg p-2 text-gray-700 focus:ring-2 focus:ring-blue-500"
+              >
+                {generateTimeSlots().map((time) => (
+                  <option key={time} value={time}>
+                    {time}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        )}
+      </div>
+    ))}
+  </div>
+</div>
+
+
 
                         {/* Working Hours */}
                         <div className="bg-white p-5 rounded-lg shadow-lg border border-gray-200">

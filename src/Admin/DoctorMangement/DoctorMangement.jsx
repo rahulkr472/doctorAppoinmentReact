@@ -92,19 +92,32 @@ const DoctorMangement = () => {
                   <p className="text-sm text-gray-500">Qualifications: {val.qualifications}</p>
                   <p className="text-sm text-gray-500">Experience: {val.experience} years</p>
                   <p className="text-sm text-gray-500">Fee: ₹{val.fee}</p>
+                  <span className="font-semibold">workingDays: </span>
                   <p className="text-sm text-gray-500">
-                    Working Days:{" "}
+                    {/* Working Days:{" "} */}
                     {Object.entries(val.workingDays)
-                      .filter(([day, isWorking]) => isWorking)
+                      .filter(([day, isWorking]) => isWorking.enabled)
                       .map(([day]) => day.charAt(0).toUpperCase() + day.slice(1))
                       .join(", ")}
                   </p>
-                  <p className="text-sm text-gray-500">Start Time: {val.workStartTime} AM</p>
-                  <p className="text-sm text-gray-500">End Time: {val.workEndTime} PM</p>
+                  <span className="font-semibold">Timing: </span>
                   <p className="text-sm text-gray-500">
-                    Off Days:{" "}
+                   
                     {Object.entries(val.workingDays)
-                      .filter(([day, isWorking]) => !isWorking)
+                      .filter(([day, isWorking]) => isWorking.enabled)
+                      .map(([day, info]) => (
+                        <div key={day}>
+                          <span className='text-black font-medium'>{day.charAt(0).toUpperCase() + day.slice(1)}  :-</span> {info.startTime} - {info.endTime}
+                        </div>
+                      ))
+                    }
+                  </p>
+                  
+                  <span className="font-semibold">OffDays: </span>
+                  <p className="text-sm text-gray-500">
+                    {/* Off Days:{" "} */}
+                    {Object.entries(val.workingDays)
+                      .filter(([day, isWorking]) => !isWorking.enabled)
                       .map(([day]) => day.charAt(0).toUpperCase() + day.slice(1))
                       .join(", ")}
                   </p>

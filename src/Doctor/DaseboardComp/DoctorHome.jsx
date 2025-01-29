@@ -52,12 +52,12 @@ const DoctorHome = () => {
         try {
           const patientRef = doc(db, "doctors", user);
           const patientDoc = await getDoc(patientRef)
-  
+
           if (patientDoc.exists()) {
             const data = patientDoc.data()
-            console.log(data.appoinment);
+            // console.log(data.appoinment);
             
-            setMessage(data.appoinment.map((val) => {
+            setMessage(data.appoinment?.map((val) => {
               return val.message
             }))
   
@@ -74,7 +74,7 @@ const DoctorHome = () => {
       }
     }
  
-    console.log(message);
+    // console.log(message);
     
   // console.log(message);
 

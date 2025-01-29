@@ -208,7 +208,7 @@ const Appoinment = () => {
   }
 
 
-const  filterData = data.filter((val) => {
+const  filterData = data?.filter((val) => {
       
   return (
     val.name.toLowerCase().includes(searchPatient.toLowerCase()) &&
@@ -218,7 +218,7 @@ const  filterData = data.filter((val) => {
 
 
   })
-console.log(filterData);
+// console.log(filterData);
 
 
 
