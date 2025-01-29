@@ -385,53 +385,7 @@ const DoctorDetail = () => {
       </div>
 
 
-
-
-      {/* <div
-        className='mt-3 shadow-md rounded-md p-4 bg-blue-300'>
-
-        <div className='flex  space-x-4  items-center'>
-          <div className="mt-4">
-            <label className="block text-sm font-medium text-gray-700">Day</label>
-            <input
-              type="date"
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              onChange={(e) => setDay(e.target.value)}
-            />
-          </div>
-          <div className="mt-4">
-            <label className="block text-sm font-medium text-gray-700">Time</label>
-            <input
-              type="time"
-              className="mt-1 block w-[1-0%] px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              onChange={(e) => setTime(e.target.value)}
-            />
-          </div>
-          <div className="mt-4">
-            <label className="block text-sm font-medium text-gray-700">Reason</label>
-            <select
-              className="mt-1  px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              onChange={(e) => setReason(e.target.value)}
-            >
-              <option value="">Select a reason</option>
-              <option value="Consultation">Consultation</option>
-              <option value="Follow-up">Follow-up</option>
-              <option value="Emergency">Emergency</option>
-              <option value="Check-up">Check-up</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-        </div>
-
-
-
-        <button
-          onClick={handleSlot}
-          className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-        >
-          Book Appointment
-        </button>
-      </div> */}
+       {/* Select Days */}
       <div className="mt-6">
         <h3 className="text-lg font-medium text-gray-700 mb-2">Select Appointment Days</h3>
         <div className="grid grid-cols-3 gap-4">
