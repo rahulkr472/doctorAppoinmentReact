@@ -3,6 +3,7 @@ import { useState, useEffect} from 'react'
 import { onAuthStateChanged } from 'firebase/auth'
 import { db, auth } from '../../Firebase-Config'
 import { doc, getDoc } from 'firebase/firestore'
+import { useTheme } from '../ThemeProvider'
 
 const PatientDetailPage = () => {
 
@@ -51,55 +52,57 @@ const PatientDetailPage = () => {
             
         },[])
 
+        const {theme} = useTheme()
+
   return (
-    <div className="container mx-auto p-6 bg-gray-50 rounded-lg shadow-lg">
-    <h1 className="text-4xl font-semibold text-center text-gray-800 mb-6">Patient Details</h1>
+    <div className={`${theme === "dark" ? "bg-gray-900 text-gray-300" : " text-primary"} h-[100vh] container mx-auto p-6 bg-gray-50 rounded-lg shadow-lg`}>
+    <h1 className="text-4xl font-semibold text-center text-primary mb-6">Patient Details</h1>
   
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-xl font-bold text-gray-700 mb-4">Personal Information</h2>
+      <div className={` ${theme === "dark" ? "bg-gray-900  shadow-[#ffffff46]" : " text-primary"}  bg-white p-6 rounded-lg shadow-md`}>
+        <h2 className="text-xl font-bold text-primary mb-4">Personal Information</h2>
         <ul className="space-y-2">
         <li className="flex justify-between">
-            <span className="text-gray-600 font-medium">Name:</span>
-            <span className="text-gray-800">{patientPersonalInfo?.name || "N/A"}</span>
+            <span className="text-primary font-medium">Name:</span>
+            <span className="text-primary">{patientPersonalInfo?.name || "N/A"}</span>
           </li>
           <li className="flex justify-between">
-            <span className="text-gray-600 font-medium">Age:</span>
-            <span className="text-gray-800">{patientPersonalInfo?.age || "N/A"}</span>
+            <span className="text-primary font-medium">Age:</span>
+            <span className="text-primary">{patientPersonalInfo?.age || "N/A"}</span>
           </li>
           <li className="flex justify-between">
-            <span className="text-gray-600 font-medium">Gender:</span>
-            <span className="text-gray-800">{patientPersonalInfo?.gender || "N/A"}</span>
+            <span className="text-primary font-medium">Gender:</span>
+            <span className="text-primary">{patientPersonalInfo?.gender || "N/A"}</span>
           </li>
           <li className="flex justify-between">
-            <span className="text-gray-600 font-medium">Phone:</span>
-            <span className="text-gray-800">{patientPersonalInfo?.phone || "N/A"}</span>
+            <span className="text-primary font-medium">Phone:</span>
+            <span className="text-primary">{patientPersonalInfo?.phone || "N/A"}</span>
           </li>
           <li className="flex justify-between">
-            <span className="text-gray-600 font-medium">Address:</span>
-            <span className="text-gray-800">{patientPersonalInfo?.address || "N/A"}</span>
+            <span className="text-primary font-medium">Address:</span>
+            <span className="text-primary">{patientPersonalInfo?.address || "N/A"}</span>
           </li>
         </ul>
       </div>
   
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-xl font-bold text-gray-700 mb-4">Medical Information</h2>
+      <div className={`${theme === "dark" ? "bg-gray-900  shadow-[#ffffff46]" : " text-primary"}  bg-white p-6 rounded-lg shadow-md`}>
+        <h2 className="text-xl font-bold text-primary mb-4">Medical Information</h2>
         <ul className="space-y-2">
           <li className="flex justify-between">
-            <span className="text-gray-600 font-medium">Allergies:</span>
-            <span className="text-gray-800">{patientMedicalInfo?.allergies || "N/A"}</span>
+            <span className="text-primary font-medium">Allergies:</span>
+            <span className="text-primary">{patientMedicalInfo?.allergies || "N/A"}</span>
           </li>
           <li className="flex justify-between">
-            <span className="text-gray-600 font-medium">Chronic Conditions:</span>
-            <span className="text-gray-800">{patientMedicalInfo?.chronicConditions || "N/A"}</span>
+            <span className="text-primary font-medium">Chronic Conditions:</span>
+            <span className="text-primary">{patientMedicalInfo?.chronicConditions || "N/A"}</span>
           </li>
           <li className="flex justify-between">
-            <span className="text-gray-600 font-medium">Medications:</span>
-            <span className="text-gray-800">{patientMedicalInfo?.medications || "N/A"}</span>
+            <span className="text-primary font-medium">Medications:</span>
+            <span className="text-primary">{patientMedicalInfo?.medications || "N/A"}</span>
           </li>
           <li className="flex justify-between">
-            <span className="text-gray-600 font-medium">Other Info:</span>
-            <span className="text-gray-800">{patientMedicalInfo?.otherInfo || "N/A"}</span>
+            <span className="text-primary font-medium">Other Info:</span>
+            <span className="text-primary">{patientMedicalInfo?.otherInfo || "N/A"}</span>
           </li>
         </ul>
       </div>

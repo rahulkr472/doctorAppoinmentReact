@@ -33,6 +33,7 @@ const AuthProvider = ({ children }) => {
 
     const [accept, setAccept] = useState([])
 
+
     return (
         <AuthContext.Provider value={{ username, setUsername, 
         email, setEmail,

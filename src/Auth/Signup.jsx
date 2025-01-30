@@ -98,7 +98,8 @@ const Signup = () => {
           username: username,
           email: email,
           role: role,
-          password: password
+          uid: user.uid
+          // password: password
         });
       
       } else {
@@ -106,7 +107,8 @@ const Signup = () => {
           username: username,
           email: email,
           role: role,
-          uid: user.uid
+          uid: user.uid,
+          password:password
         }
         await setDoc(doc(db, 'patients', user.uid), {
          patientInfo: patientInfo,
@@ -134,6 +136,8 @@ const Signup = () => {
       alert("User registered successfully");
     } catch (error) {
       console.log(error);
+      console.log("Failed to register user. Check Firestore permissions.");
+      
 
     }
 

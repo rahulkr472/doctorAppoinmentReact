@@ -42,8 +42,8 @@ const AdminHome = () => {
         friday: { enabled: false, startTime: '', endTime: '' },
         saturday: { enabled: false, startTime: '', endTime: '' },
         sunday: { enabled: false, startTime: '', endTime: '' },
-      });
-      
+    });
+
 
 
     const [doctorSignUpInfo, setDoctorSignUpInfo] = useState(() => {
@@ -68,20 +68,20 @@ const AdminHome = () => {
         const slots = [];
         let startTime = 10; // 10 AM
         let endTime = 20; // 8 PM
-      
+
         for (let hour = startTime; hour <= endTime; hour++) {
-          const formattedTime = `${hour <= 12 ? hour : hour - 12}:00 ${hour < 12 ? 'AM' : 'PM'}`;
-          slots.push(formattedTime);
+            const formattedTime = `${hour <= 12 ? hour : hour - 12}:00 ${hour < 12 ? 'AM' : 'PM'}`;
+            slots.push(formattedTime);
         }
         return slots;
-      };
-      
-      const handleTimeChange = (day, field, value) => {
+    };
+
+    const handleTimeChange = (day, field, value) => {
         setWorkingDays((prev) => ({
-          ...prev,
-          [day]: { ...prev[day], [field]: value },
+            ...prev,
+            [day]: { ...prev[day], [field]: value },
         }));
-      };
+    };
 
 
     const handleSubmit = async (e) => {
@@ -595,61 +595,61 @@ const AdminHome = () => {
                     <div className="space-y-6">
                         {/* Working Days */}
                         <div className="bg-white p-5 rounded-lg shadow-lg border border-gray-200">
-  <label className="font-semibold text-xl text-gray-700">Set Doctor's Working Days:</label>
-  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-    {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => (
-      <div key={day} className="flex flex-col space-y-2">
-        {/* Checkbox to enable/disable day */}
-        <div className="flex items-center space-x-2">
-          <input
-            type="checkbox"
-            checked={workingDays[day]?.enabled || false}
-            onChange={() => handleDayChange(day)}
-            className="h-4 w-4 text-blue-500 focus:ring-2 focus:ring-blue-500"
-          />
-          <label className="text-lg text-gray-700 capitalize">{day}</label>
-        </div>
-        
-        {/* Time range dropdowns */}
-        {workingDays[day]?.enabled && (
-          <div className="flex flex-col space-y-2">
-            <label className="text-sm text-gray-600">Select Time Range:</label>
-            <div className="flex space-x-2">
-              <select
-                value={workingDays[day]?.startTime || ''}
-                onChange={(e) => handleTimeChange(day, 'startTime', e.target.value)}
-                className="border border-gray-300 rounded-lg p-2 text-gray-700 focus:ring-2 focus:ring-blue-500"
-              >
-                {generateTimeSlots().map((time) => (
-                  <option key={time} value={time}>
-                    {time}
-                  </option>
-                ))}
-              </select>
-              <span className="text-gray-500">to</span>
-              <select
-                value={workingDays[day]?.endTime || ''}
-                onChange={(e) => handleTimeChange(day, 'endTime', e.target.value)}
-                className="border border-gray-300 rounded-lg p-2 text-gray-700 focus:ring-2 focus:ring-blue-500"
-              >
-                {generateTimeSlots().map((time) => (
-                  <option key={time} value={time}>
-                    {time}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        )}
-      </div>
-    ))}
-  </div>
-</div>
+                            <label className="font-semibold text-xl text-gray-700">Set Doctor's Working Days:</label>
+                            <div className="grid grid-cols-2  gap-4 mt-4">
+                                {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => (
+                                    <div key={day} className="flex flex-col space-y-2">
+                                        {/* Checkbox to enable/disable day */}
+                                        <div className="flex items-center mt-1 space-x-2">
+                                            <input
+                                                type="checkbox"
+                                                checked={workingDays[day]?.enabled || false}
+                                                onChange={() => handleDayChange(day)}
+                                                className="h-4 w-4 text-blue-500 focus:ring-2 focus:ring-blue-500"
+                                            />
+                                            <label className="text-lg text-gray-700 capitalize">{day}</label>
+                                        </div>
+
+                                        {/* Time range dropdowns */}
+                                        {workingDays[day]?.enabled && (
+                                            <div className="flex flex-col space-y-2">
+                                                <label className="text-sm text-gray-600">Select Time Range:</label>
+                                                <div className="flex space-x-2">
+                                                    <select
+                                                        value={workingDays[day]?.startTime || ''}
+                                                        onChange={(e) => handleTimeChange(day, 'startTime', e.target.value)}
+                                                        className="border border-gray-300 rounded-lg p-2 text-gray-700 focus:ring-2 focus:ring-blue-500"
+                                                    >
+                                                        {generateTimeSlots().map((time) => (
+                                                            <option key={time} value={time}>
+                                                                {time}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                    <span className="text-gray-500">to</span>
+                                                    <select
+                                                        value={workingDays[day]?.endTime || ''}
+                                                        onChange={(e) => handleTimeChange(day, 'endTime', e.target.value)}
+                                                        className="border border-gray-300 rounded-lg p-2 text-gray-700 focus:ring-2 focus:ring-blue-500"
+                                                    >
+                                                        {generateTimeSlots().map((time) => (
+                                                            <option key={time} value={time}>
+                                                                {time}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
 
 
 
                         {/* Working Hours */}
-                        <div className="bg-white p-5 rounded-lg shadow-lg border border-gray-200">
+                        {/* <div className="bg-white p-5 rounded-lg shadow-lg border border-gray-200">
                             <label className="font-semibold text-xl text-gray-700">Set Doctor's Working Hours:</label>
                             <div className="flex space-x-6 mt-4">
                                 <div className="flex flex-col w-1/2">
@@ -671,7 +671,7 @@ const AdminHome = () => {
                                     />
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
 
                         {/* Time Off */}
                         {/* <div className="space-y-6">

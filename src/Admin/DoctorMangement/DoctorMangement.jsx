@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { auth, db } from '../../Firebase-Config'
 import { deleteUser } from 'firebase/auth'
 import { deleteDoc, doc, getDoc } from 'firebase/firestore'
+import { useTheme } from '../ThemeProvider'
 
 
 const DoctorMangement = () => {
@@ -53,13 +54,13 @@ const DoctorMangement = () => {
 
 
   }
-
-  // localStorage.clear()
+  // const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
+const {theme} = useTheme()
 
   return (
-    <div className="bg-gray-100 min-h-screen flex justify-center">
-    <div className="w-full max-w-4xl bg-white shadow-lg rounded-lg p-6">
-      <h1 className="text-2xl font-bold text-gray-800 mb-4">Doctors List</h1>
+    <div className={`${theme === "dark" ? "bg-gray-900 text-white border-white" : "bg-white text-black"}  min-h-screen flex justify-center`}>
+    <div className={`w-full max-w-4xl  shadow-lg rounded-lg p-6 ${theme === "dark" ? "bg-gray-900 text-white border-white" : "bg-white text-black"} `}>
+      <h1 className="text-2xl font-bold text-primary mb-4">Doctors List</h1>
 
       {/* Search Bar */}
       <div className="mb-4">
@@ -78,7 +79,7 @@ const DoctorMangement = () => {
           filteredDoctors.map((val, i) => (
             <li
               key={i}
-              className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col sm:flex-row sm:items-center sm:justify-between"
+              className={ ` mt-8 ${theme === "dark" ? "bg-gray-900 text-white shadow-[#ffffff41]" : "bg-white text-black"} text-primary p-6 rounded-lg shadow-lg hover:shadow-lg transition-shadow duration-300 flex flex-col sm:flex-row sm:items-center sm:justify-between`}
             >
               <div className="flex items-start space-x-4 sm:items-center">
                 <img
@@ -87,12 +88,12 @@ const DoctorMangement = () => {
                   className="w-16 h-16 rounded-full border border-gray-300"
                 />
                 <div>
-                  <p className="text-xl font-bold text-gray-800">{val.name}</p>
+                  <p className="text-xl font-bold text-primary">{val.name}</p>
                   <p className="text-sm text-gray-500">Specialization: {val.specialization}</p>
                   <p className="text-sm text-gray-500">Qualifications: {val.qualifications}</p>
                   <p className="text-sm text-gray-500">Experience: {val.experience} years</p>
                   <p className="text-sm text-gray-500">Fee: ₹{val.fee}</p>
-                  <span className="font-semibold">workingDays: </span>
+                  <span className="font-semibold text-primary">workingDays: </span>
                   <p className="text-sm text-gray-500">
                     {/* Working Days:{" "} */}
                     {Object.entries(val.workingDays)
@@ -107,7 +108,7 @@ const DoctorMangement = () => {
                       .filter(([day, isWorking]) => isWorking.enabled)
                       .map(([day, info]) => (
                         <div key={day}>
-                          <span className='text-black font-medium'>{day.charAt(0).toUpperCase() + day.slice(1)}  :-</span> {info.startTime} - {info.endTime}
+                          <span className='text-primary font-medium'>{day.charAt(0).toUpperCase() + day.slice(1)}  :-</span> {info.startTime} - {info.endTime}
                         </div>
                       ))
                     }

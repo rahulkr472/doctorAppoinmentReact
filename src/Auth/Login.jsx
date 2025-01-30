@@ -26,16 +26,20 @@ const Login = () => {
             const patientDoc = await getDoc(doc(db, 'patients', user.uid));
             const adminDoc = await getDoc(doc(db, 'admin', user.uid));
             
-           console.log(doctorDoc.uid);
-           console.log(adminDoc.uid);
+        //    console.log(doctorDoc.uid);
+        //    console.log(adminDoc.uid);
+            // Log document IDs to verify they exist
+    console.log("Admin Doc ID:", adminDoc.exists() ? adminDoc.id : "Not Found");
+    console.log("Doctor Doc ID:", doctorDoc.exists() ? doctorDoc.id : "Not Found");
+    console.log("Patient Doc ID:", patientDoc.exists() ? patientDoc.id : "Not Found");
            
            
 
             if (doctorDoc.exists()) {
                 const userData = doctorDoc.data();
-                console.log(userData.doctorSignUpinfo.role);
+                console.log(userData?.doctorSignUpinfo.role);
                 
-                const userRole = userData.doctorSignUpinfo.role;
+                const userRole = userData?.doctorSignUpinfo.role || "";
 
                 // Redirect based on role after successful login
                 if (userRole === 'doctor') {
@@ -62,7 +66,7 @@ const Login = () => {
              else if (patientDoc.exists()) {
 
                 const userData = patientDoc.data();
-                const userRole = userData.patientInfo.role;
+                const userRole = userData?.patientInfo.role || "";
 
                 console.log("User logged in successfully:", user);
                 console.log("User role:", userRole);
@@ -79,6 +83,7 @@ const Login = () => {
             }
 
         } catch (error) {
+            console.error("Login error:", error);
             alert("User not found! pls sign up");
         }
 

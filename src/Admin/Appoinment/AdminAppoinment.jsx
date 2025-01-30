@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import DatePicker from 'react-datepicker';
 import { useNavigate } from 'react-router';
+import { useTheme } from '../ThemeProvider';
 
 const AdminAppoinment = () => {
 
@@ -68,31 +69,32 @@ const AdminAppoinment = () => {
   // console.log(startTime);
 
 
+  const {theme} = useTheme()
 
 
   return (
-    <div className="bg-gradient-to-r from-blue-50 to-gray-50 min-h-screen p-6">
+    <div className={`${theme === "dark" ? "bg-gray-900 text-white" : " text-primary bg-gradient-to-r from-blue-50 to-gray-50"}  min-h-screen p-6`}>
     <h1 className="text-4xl font-extrabold text-center text-blue-700 mb-12">
       Appointments
     </h1>
   
     {/* Date and Time Filters */}
-    <div className="container mx-auto mb-10 p-6 flex flex-wrap items-center justify-center gap-6 bg-white shadow-lg rounded-xl">
+    <div className={`${theme === "dark" ? "bg-gray-900 text-white shadow-[#ffffff41]" : " text-primary"} container mx-auto mb-10 p-6 flex flex-wrap items-center justify-center gap-6 bg-white shadow-lg rounded-xl`}>
       {/* Search Input */}
       <div className="flex flex-col w-full md:w-1/3">
-        <label className="text-lg font-semibold text-gray-700 mb-2">Search Doctor</label>
+        <label className="text-lg font-semibold text-primary mb-2">Search Doctor</label>
         <input
           value={searchDoctor}
           onChange={(e) => setSearchDoctor(e.target.value)}
           type="text"
           placeholder="Search Doctor"
-          className="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          className="p-3 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
         />
       </div>
   
       {/* Date Range Picker */}
       <div className="flex flex-col w-full md:w-1/3">
-        <label className="text-lg font-semibold text-gray-700 mb-2">Date Range</label>
+        <label className="text-lg font-semibold text-primary mb-2">Date Range</label>
         <div className="flex gap-4">
           <DatePicker
             selected={startDate}
@@ -100,7 +102,7 @@ const AdminAppoinment = () => {
             selectsStart
             startDate={startDate}
             endDate={endDate}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            className="w-full p-3 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
             placeholderText="Start Date"
           />
           <DatePicker
@@ -109,7 +111,7 @@ const AdminAppoinment = () => {
             selectsEnd
             startDate={startDate}
             endDate={endDate}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            className="w-full p-3 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
             placeholderText="End Date"
           />
         </div>
@@ -117,24 +119,24 @@ const AdminAppoinment = () => {
   
       {/* Time Range Pickers */}
       <div className="flex flex-col w-full md:w-1/3">
-        <label className="text-lg font-semibold text-gray-700 mb-2">Time Range</label>
+        <label className="text-lg font-semibold text-primary mb-2">Time Range</label>
         <div className="flex gap-4">
           <div className="flex-1">
-            <label className="block text-sm font-medium text-gray-600 mb-1">Start Time</label>
+            <label className="block text-sm font-medium text-primary mb-1">Start Time</label>
             <input
               type="time"
               value={startTime}
               onChange={(e) => setStartTime(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              className="w-full p-3 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
           </div>
           <div className="flex-1">
-            <label className="block text-sm font-medium text-gray-600 mb-1">End Time</label>
+            <label className="block text-sm font-medium text-primary mb-1">End Time</label>
             <input
               type="time"
               value={endTime}
               onChange={(e) => setEndTime(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              className="w-full p-3 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
           </div>
         </div>

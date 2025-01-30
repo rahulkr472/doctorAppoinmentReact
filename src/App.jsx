@@ -24,6 +24,7 @@ import PatientDetailPage from './Admin/PatientDetail/PatientDetailPage'
 import AdminAppoinment from './Admin/Appoinment/AdminAppoinment'
 import { ToastContainer, toast } from 'react-toastify';
 import AppoinmentDetail from './Admin/Appoinment/AppoinmentDetail'
+import ThemeProvider from './Admin/ThemeProvider'
 
 
 const App = () => {
@@ -43,6 +44,7 @@ const App = () => {
       // transition={Bounce}
       />
       <AuthProvider>
+        <ThemeProvider>
         <DoctorContext>
           <Routes>
             <Route path='/' element={<Signup />} />
@@ -83,6 +85,7 @@ const App = () => {
           </Routes>
 
         </DoctorContext>
+        </ThemeProvider>
       </AuthProvider>
     </BrowserRouter>
 
